@@ -61,7 +61,7 @@
     </div>
 </div>
 
-@section Scripts{
+@section scripts{
 
     <script>
 
@@ -77,6 +77,7 @@
             try {
                 const response = await fetch('@Url.Action("Register", "Auth")', {
                     method: "POST",
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
                     body:formData
                 });
 
