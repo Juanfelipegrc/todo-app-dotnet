@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Net;
 using TodoApp.Application.DTOs;
 using TodoApp.Application.Interfaces.IServices;
 using TodoApp.Models;
@@ -41,8 +42,13 @@ namespace TodoApp.Controllers
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
 
-            if (!ModelState.IsValid) 
-            { 
+            if (!ModelState.IsValid)
+            {
+                if (Request.IsAjaxRequest())
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Content("Invalid data");
+                }
                 return View(model);
             }
 
@@ -55,6 +61,11 @@ namespace TodoApp.Controllers
 
             if (!result.Success)
             {
+                if (Request.IsAjaxRequest())
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Content(result.ErrorMessage);
+                }
                 ViewBag.Error = result.ErrorMessage;
                 return View(model);
             }
@@ -62,7 +73,13 @@ namespace TodoApp.Controllers
             Session["UserId"] = result.UserId;
             Session["Email"] = result.Email;
 
-            return RedirectToAction("Index", "Todo", new {userId = result.UserId});
+            if (Request.IsAjaxRequest())
+            {
+                var redirectUrl = Url.Action("Index", "Todo", new { userId = result.UserId });
+                return Json(new { redirectUrl });
+            }
+
+            return RedirectToAction("Index", "Todo", new { userId = result.UserId });
 
 
         }
@@ -73,6 +90,11 @@ namespace TodoApp.Controllers
         {
             if (!ModelState.IsValid)
             {
+                if (Request.IsAjaxRequest())
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Content("Invalid data");
+                }
                 return View();
             }
 
@@ -82,17 +104,28 @@ namespace TodoApp.Controllers
                 Password = model.Password
             });
 
-            if (!result.Success) 
+            if (!result.Success)
             {
+                if (Request.IsAjaxRequest())
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Content(result.ErrorMessage);
+                }
                 ViewBag.Error = result.ErrorMessage;
                 return View(model);
             }
 
-            
+
             Session["UserId"] = result.UserId;
             Session["Email"] = result.Email;
 
-            return RedirectToAction("Index", "Todo", new {userId = result.UserId});
+            if (Request.IsAjaxRequest())
+            {
+                var redirectUrl = Url.Action("Index", "Todo", new { userId = result.UserId });
+                return Json(new { redirectUrl });
+            }
+
+            return RedirectToAction("Index", "Todo", new { userId = result.UserId });
         }
 
     }
