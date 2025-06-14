@@ -9,7 +9,7 @@ namespace TodoApp.Application.Interfaces.IServices
 {
     public interface IAuthService
     {
-        Task<UserLoginResultDTO> LoginAsync(LoginRequestDTO request);
-        Task<UserLoginResultDTO> RegisterAsync(RegisterRequestDTO request);
+        Task<AuthResultDTO> LoginAsync(LoginRequestDTO request);
+        Task<AuthResultDTO> RegisterAsync(RegisterRequestDTO request);
     }
 }

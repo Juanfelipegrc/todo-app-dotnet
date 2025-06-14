@@ -21,20 +21,20 @@ namespace TodoApp.Application.Services
         
         }
 
-        public async Task<UserLoginResultDTO> LoginAsync(LoginRequestDTO request)
+        public async Task<AuthResultDTO> LoginAsync(LoginRequestDTO request)
         {
             var user = await _userService.GetUserByEmailAsync(request.Email);
 
             if (user == null || !_passwordHasher.Verify(request.Password, user.Password)) 
             {
-                return new UserLoginResultDTO
+                return new AuthResultDTO
                 {
                     Success = false,
                     ErrorMessage = "Incorrect email or password"
                 };
             }
 
-            return new UserLoginResultDTO
+            return new AuthResultDTO
             {
                 Success = true,
                 UserId = user.Id,
@@ -43,14 +43,15 @@ namespace TodoApp.Application.Services
         }
 
 
-        public async Task<UserLoginResultDTO> RegisterAsync(RegisterRequestDTO request)
+
+        public async Task<AuthResultDTO> RegisterAsync(RegisterRequestDTO request)
         {
 
             var existingUser = await _userService.GetUserByEmailAsync(request.Email);
 
             if(existingUser != null)
             {
-                return new UserLoginResultDTO
+                return new AuthResultDTO
                 {
                     Success = false,
                     ErrorMessage = "User already exists"
@@ -64,7 +65,7 @@ namespace TodoApp.Application.Services
 
                 var user = await _userService.GetUserByEmailAsync(request.Email);
 
-                return new UserLoginResultDTO
+                return new AuthResultDTO
                 {
                     Success = true,
                     UserId = user.Id,
@@ -73,7 +74,7 @@ namespace TodoApp.Application.Services
             }
             catch (Exception ex) 
             {
-                return new UserLoginResultDTO
+                return new AuthResultDTO
                 {
                     Success = false,
                     ErrorMessage = "Invalid email or password"

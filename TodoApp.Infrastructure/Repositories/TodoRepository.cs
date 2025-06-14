@@ -45,5 +45,22 @@ namespace TodoApp.Infrastructure.Repositories
             _context.Todos.Add(todo);
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateStatusTodoAsync(int todoId, string newStatus)
+        {
+            var todo = await _context.Todos.FindAsync(todoId);
+
+            todo.Status = newStatus;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteTodoAsync(int todoId)
+        {
+            var todo = await _context.Todos.FindAsync(todoId);
+            _context.Todos.Remove(todo);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

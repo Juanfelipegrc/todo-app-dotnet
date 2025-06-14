@@ -27,8 +27,20 @@ namespace TodoApp
 
             routes.MapRoute(
                 name: "GetAllTodos",
-                url: "Todo/All/{userId}",
+                url: "Todo/All",
                 defaults: new { controller = "Todo", action = "Index"}
+            );
+
+            routes.MapRoute(
+                name: "CreateTodo",
+                url: "Todo/Create",
+                defaults: new { controller = "Todo", action = "Create" }
+            );
+
+            routes.MapRoute(
+                name: "UpdateTodo",
+                url: "Todo/Update",
+                defaults: new { controller = "Todo", action = "Update" }
             );
 
             routes.MapRoute(

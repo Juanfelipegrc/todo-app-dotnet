@@ -12,5 +12,7 @@ namespace TodoApp.Application.Interfaces.IRepositories
         Task<Todo> GetTodoByIdAsync(int todoId);
         Task<IEnumerable<Todo>> GetAllTodosAsync(int userId);
         Task CreateTodoAsync (Todo todo);
+        Task UpdateStatusTodoAsync(int todoId, string newStatus);
+        Task DeleteTodoAsync(int todoId);
     }
 }

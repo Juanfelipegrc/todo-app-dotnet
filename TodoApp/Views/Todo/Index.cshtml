@@ -4,29 +4,119 @@
     ViewBag.Title = "Index";
 }
 
-<div class="container-fluid bg-black d-flex flex-column align-items-center">
+<style>
+    .overflow-y-scroll {
+        overflow-y: scroll;
+    }
+    .small-font{
+        font-size: 13px;
+    }
+</style>
 
-    <a 
-        href="@Url.Action("Create", "Todo")"
-        class="btn btn-primary mb-4"
-    >
+<div class="container-fluid position-relative overflow-y-scroll h-100 bg-black d-flex flex-column align-items-center">
+
+    <div class="w-100 py-4 d-flex justify-content-center align-items-center">
+        <h2 class="fs-1 fw-bold text-white">Todo List</h2>
+    </div>
+    
+    <a href="@Url.Action("Logout", "Auth")" class="position-absolute top-0 end-0 p-4">
+        <svg xmlns="http://www.w3.org/2000/svg" 
+             height="24px" 
+             viewBox="0 -960 960 960" 
+             width="24px" 
+             fill="#ffffff">
+                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
+        </svg>
+    </a>
+
+    <a href="@Url.Action("Create", "Todo")"
+       class="btn btn-outline-light col-10 col-md-6 col-lg-8 my-4 mb-4">
         Create Todo
     </a>
 
-    <div class="container d-flex flex-column align-items-center">
-        @foreach (var todo in Model)
-        {
-            <div class="card">
-                <div class="card-body d-flex flex-column align-items-center gap-3">
-                    <h3 class="text-white fw-bold fs-2">@todo.Name</h3>
 
-                    <h6 class="text-white fs-4">@todo.Status</h6>
+    @if (Model.Count() == 0)
+    {
+        <div class="container-fluid h-100 d-flex justify-content-center align-items-center">
+            <h3 class="text-white fs-6">No TODOS</h3>
+        </div>
+    }
+    else
+    {
+        <div class="container pb-5 d-flex flex-wrap gap-3 justify-content-center">
+            @foreach (var todo in Model)
+            {
+                <div class="card col-10 col-md-5 col-lg-4 rounded-2 @(todo.Status == "InProgress"?  "bg-warning" : todo.Status == "Completed"? "bg-success text-white" : todo.Status  == "Pending"? "bg-danger text-white" : "" )">
+                    <div class="card-body w-100 bg-transparent rounded-2 bg-white d-flex flex-column align-items-center gap-3">
+                        <h3 class="fw-bold fs-2 text-center">@todo.Name</h3>
 
+                        <h6 class="fs-4">@todo.Status</h6>
+
+                        <div class="d-flex gap-3 justify-content-around">
+                            <a href="@Url.Action("Update", "Todo", new {todoId = todo.Id})" class="btn btn-dark">
+                                Change Status
+                            </a>
+                            <button onclick="deleteTodo(@todo.Id)" class="btn btn-dark">
+                                Delete
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
-            </div>
-        }
-    </div>
-
+            }
+        </div>
+    }
 
 
 </div>
+
+@functions{
+
+    public string TokenHeaderValue()
+    {
+        string cookieToken, formToken;
+        System.Web.Helpers.AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+
+    }
+}
+
+@section scripts{
+
+    <script>
+
+
+
+        async function deleteTodo(todoId) {
+            try {
+                const response = await fetch("@Url.Action("DeleteJson", "Todo")", {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json",
+                        "RequestVerificationToken": "@TokenHeaderValue()"
+                    },
+                    body: JSON.stringify({
+                        TodoId: todoId
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    window.location.href = result.redirectUrl;
+                } else {
+                    console.log(result)
+                    alert(result.error || "Error Deleting Todo")
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Network Error")
+            }
+        }
+
+
+    </script>
+
+
+}

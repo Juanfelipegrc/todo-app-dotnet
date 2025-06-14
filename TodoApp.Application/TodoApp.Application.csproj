@@ -41,9 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTOs\CreationTodoResultDTO.cs" />
     <Compile Include="DTOs\LoginRequestDTO.cs" />
     <Compile Include="DTOs\RegisterRequestDTO.cs" />
-    <Compile Include="DTOs\UserLoginResultDTO.cs" />
+    <Compile Include="DTOs\AuthResultDTO.cs" />
     <Compile Include="Interfaces\IRepositories\ITodoRepository.cs" />
     <Compile Include="Interfaces\IRepositories\IUserRepository.cs" />
     <Compile Include="Interfaces\IServices\IAuthService.cs" />
